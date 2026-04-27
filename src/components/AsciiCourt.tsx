@@ -82,8 +82,21 @@ export function AsciiCourt() {
       stateRef.current.targetX = Math.max(3, Math.min(RIM_COL - 8, xChar));
     };
 
-    const onDown = () => {
+    const onDown = (e: PointerEvent) => {
       const s = stateRef.current;
+      // Snap target to where the pointer landed. On touch this is the only
+      // signal we get before charging starts (no hover) — without it the
+      // player charges from wherever they were last, not where the user
+      // tapped. On mouse this is a no-op since pointermove kept targetX warm.
+      const { charW } = colsToPx();
+      const r = stage.getBoundingClientRect();
+      const xChar = (e.clientX - r.left) / charW;
+      s.targetX = Math.max(3, Math.min(RIM_COL - 8, xChar));
+      // Skip the easing for touch so the player jumps directly to the finger
+      // instead of crawling toward it while the charge already builds.
+      if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+        s.x = s.targetX;
+      }
       if (s.mode !== 'dribble') return;
       s.mode = 'charging';
       s.chargeStart = performance.now();
@@ -134,6 +147,9 @@ export function AsciiCourt() {
     stage.addEventListener('pointermove', onMove);
     stage.addEventListener('pointerdown', onDown);
     window.addEventListener('pointerup', releaseShot);
+    // Touch can be cancelled by the OS (incoming call, system gesture). Treat
+    // it the same as a release so we don't leave the user stuck mid-charge.
+    window.addEventListener('pointercancel', releaseShot);
 
     let raf = 0;
     const render = () => {
@@ -183,7 +199,11 @@ export function AsciiCourt() {
             const rollFrames = 30;
             let i = 0;
             const startX = s.x;
-            const endX = s._lastPlayerX != null ? s._lastPlayerX : PLAYER_COL;
+            // Land the ball at the front-hand column (one right of the player
+            // body) so the next-frame `playerCol = round(ball.x) - 1` resolves
+            // back to the same body column. Without the +1 the body drifts one
+            // column left per shot until the ball walks off the court.
+            const endX = s._lastPlayerX != null ? s._lastPlayerX + 1 : PLAYER_COL;
             const id = window.setInterval(() => {
               i++;
               const tt = i / rollFrames;
@@ -212,6 +232,7 @@ export function AsciiCourt() {
       stage.removeEventListener('pointermove', onMove);
       stage.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointerup', releaseShot);
+      window.removeEventListener('pointercancel', releaseShot);
     };
   }, []);
 
@@ -263,7 +284,12 @@ export function AsciiCourt() {
         )}
       </div>
       <div className="court-caption">
-        <span className="kbd">move</span> to dribble · <span className="kbd">hold + release</span> to shoot
+        <span className="court-caption-mouse">
+          <span className="kbd">move</span> to dribble · <span className="kbd">hold + release</span> to shoot
+        </span>
+        <span className="court-caption-touch">
+          <span className="kbd">tap + hold</span> to aim & charge · <span className="kbd">release</span> to shoot
+        </span>
       </div>
     </div>
   );

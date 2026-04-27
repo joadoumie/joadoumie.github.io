@@ -32,15 +32,24 @@ a:hover {
 ::selection { background: var(--accent); color: var(--bg); }
 
 /* layout shell */
+/* Horizontal-only longhand on purpose. Using `padding: 0 32px` here would
+   override the vertical padding that `section { padding: 200px 0 }` sets,
+   because `.shell` (class) wins specificity against `section` (type) and
+   shorthand zeros out top/bottom. Sections need their own vertical breathing
+   room — keep this rule scoped to width + horizontal padding only. */
 .shell {
   width: 100%;
   max-width: var(--measure);
   margin: 0 auto;
-  padding: 0 32px;
+  padding-left: 32px;
+  padding-right: 32px;
 }
 
 @media (max-width: 720px) {
-  .shell { padding: 0 20px; }
+  .shell {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
 
 /* nav */
@@ -99,10 +108,10 @@ a:hover {
 /* section base */
 section {
   position: relative;
-  padding: 120px 0;
+  padding: 48px 0;
 }
 @media (max-width: 720px) {
-  section { padding: 80px 0; }
+  section { padding: 32px 0; }
 }
 
 .section-label {
@@ -173,6 +182,12 @@ section {
   color: var(--fg);
 }
 .hero-name .accent { color: var(--accent); }
+.hero-name .word {
+  /* keep each name as one un-breakable unit so the line break (when needed)
+     happens between first/last name, not mid-word. */
+  display: inline-block;
+  white-space: nowrap;
+}
 .hero-name .char {
   display: inline-block;
   opacity: 0;
@@ -293,7 +308,10 @@ section {
 
 .court-stage {
   position: relative;
-  aspect-ratio: 44 / 22;
+  /* taller aspect than the 44:22 grid so the player's legs + floor + free-throw
+     dots aren't clipped at the bottom of the stage (12px × 22 rows + padding
+     doesn't fit a 2:1 box at our max width). */
+  aspect-ratio: 44 / 26;
   width: 100%;
   background:
     radial-gradient(ellipse at 75% 30%, rgba(226,183,20,0.05), transparent 60%),
@@ -302,12 +320,17 @@ section {
   border-radius: 3px;
   cursor: crosshair;
   overflow: hidden;
+  /* On touch devices, dragging on the court should dribble — not scroll the
+     page. touch-action: none disables the browser's default pan/zoom on this
+     element. The tap-highlight removal kills the gray flash on tap. */
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .court-scene {
   position: absolute;
   inset: 0;
   margin: 0;
-  padding: 8px 10px;
+  padding: 4px 10px;
   font-family: var(--mono);
   font-size: 12px;
   line-height: 1.0;
@@ -383,6 +406,13 @@ section {
   color: var(--accent);
   background: var(--bg-2);
   margin: 0 2px;
+}
+/* show the mouse caption by default; swap to the touch caption when the
+   primary input is touch (no hover, coarse pointer). */
+.court-caption-touch { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .court-caption-mouse { display: none; }
+  .court-caption-touch { display: inline; }
 }
 
 .scroll-hint {

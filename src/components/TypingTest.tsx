@@ -82,19 +82,26 @@ export function TypingTest({ duration = 15 }: Props) {
   const finalRaw = typed.length ? Math.round(typed.length / 5 / (elapsed / 60)) : 0;
   const consistency = wpmHistory.length > 1 ? computeConsistency(wpmHistory) : 0;
 
-  const submitScore = useCallback(() => {
-    const name = submitName.trim().slice(0, 16) || 'anonymous';
-    const entry: Score = {
-      name,
-      wpm: finalWpm,
-      acc: finalAcc,
-      when: new Date().toISOString().slice(0, 10),
-    };
-    const next = [...board, entry].sort((a, b) => b.wpm - a.wpm).slice(0, 50);
-    setBoard(next);
-    saveBoard(next);
-    setSubmitted(true);
-  }, [submitName, finalWpm, finalAcc, board]);
+  const submitScore = useCallback(
+    (nameOverride?: string) => {
+      // The terminal `submit <handle>` flow passes the name directly so we
+      // don't depend on a setSubmitName state update landing before the call —
+      // that race was producing "anonymous" entries even with a valid handle.
+      const raw = nameOverride ?? submitName;
+      const name = raw.trim().slice(0, 16) || 'anonymous';
+      const entry: Score = {
+        name,
+        wpm: finalWpm,
+        acc: finalAcc,
+        when: new Date().toISOString().slice(0, 10),
+      };
+      const next = [...board, entry].sort((a, b) => b.wpm - a.wpm).slice(0, 50);
+      setBoard(next);
+      saveBoard(next);
+      setSubmitted(true);
+    },
+    [submitName, finalWpm, finalAcc, board]
+  );
 
   const clearBoard = () => {
     if (!confirm('Clear local leaderboard? (your scores only — joadoumie stays pinned)')) return;

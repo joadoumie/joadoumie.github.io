@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { HERO_BIO } from '../data/bio';
 import { AsciiCourt } from './AsciiCourt';
 
-const NBSP = ' ';
+const FIRST_NAME = 'jordi';
+const LAST_NAME = 'adoumie';
 
 export function Hero() {
   const nameRef = useRef<HTMLHeadingElement>(null);
@@ -75,8 +76,6 @@ export function Hero() {
     };
   }, []);
 
-  const nameChars = 'jordi adoumie'.split('');
-
   return (
     <section className="hero shell">
       <div className="hero-grid">
@@ -86,10 +85,18 @@ export function Hero() {
             <span>~/jordi $ whoami</span>
           </div>
           <h1 className="hero-name" ref={nameRef}>
-            {nameChars.map((c, i) => (
-              <span key={i} className="char">{c === ' ' ? NBSP : c}</span>
-            ))}
-            <span className="char accent">.</span>
+            <span className="word">
+              {FIRST_NAME.split('').map((c, i) => (
+                <span key={`f${i}`} className="char">{c}</span>
+              ))}
+            </span>
+            {' '}
+            <span className="word">
+              {LAST_NAME.split('').map((c, i) => (
+                <span key={`l${i}`} className="char">{c}</span>
+              ))}
+              <span className="char accent">.</span>
+            </span>
           </h1>
           <div className="hero-role" ref={roleRef}>
             product manager <span className="sep">/</span> open-source builder <span className="sep">/</span>
@@ -108,7 +115,8 @@ export function Hero() {
         <AsciiCourt />
       </div>
       <div className="scroll-hint" ref={hintRef}>
-        <span className="arrow">↓</span> scroll · or press <kbd style={{ color: 'var(--fg)' }}>j</kbd>
+        <span className="arrow">↓</span> scroll · or press{' '}
+        <kbd style={{ color: 'var(--fg)' }}>j</kbd>/<kbd style={{ color: 'var(--fg)' }}>k</kbd>
       </div>
     </section>
   );

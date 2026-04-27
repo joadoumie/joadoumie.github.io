@@ -26,7 +26,7 @@ type Props = {
   board: Score[];
   submitted: boolean;
   setSubmitName: (name: string) => void;
-  submitScore: () => void;
+  submitScore: (nameOverride?: string) => void;
   onRestart: () => void;
 };
 
@@ -164,9 +164,23 @@ export function TerminalTakeover({
       } else if (submitted) {
         next.push({ kind: 'err', text: 'already submitted this session' });
       } else {
+        // pass the name directly so we don't race a setSubmitName state update
         setSubmitName(name);
-        window.setTimeout(() => submitScore(), 0);
+        submitScore(name);
+        // compute the post-submit rows synchronously — board prop hasn't
+        // re-rendered yet, so we can't reuse the top-level `rows` constant
+        const newEntry: Score = {
+          name,
+          wpm: finalWpm,
+          acc: finalAcc,
+          when: new Date().toISOString().slice(0, 10),
+        };
+        const updated = [...board, newEntry]
+          .sort((a, b) => b.wpm - a.wpm)
+          .filter((e) => !(e.name === PINNED.name && e.wpm === PINNED.wpm));
+        const updatedRows = [PINNED, ...updated].slice(0, 8);
         next.push({ kind: 'ok', text: `✓ ${name} → leaderboard.txt` });
+        next.push({ kind: 'lb', rows: updatedRows });
       }
     } else if (cmd === 'leaderboard' || cmd === 'lb') {
       next.push({ kind: 'lb', rows });
@@ -345,6 +359,7 @@ function TermEntry({ entry }: { entry: ScriptEntry }) {
         <div className="term-line term-out dim">─────────────────────────────────────</div>
         <div className="term-line term-out">
           type <span className="val">play-again</span> to run a new session,{' '}
+          <span className="val">leaderboard</span> to reprint scores,{' '}
           <span className="val">submit &lt;handle&gt;</span> to save, or{' '}
           <span className="val">help</span> for more
         </div>
