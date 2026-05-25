@@ -32,7 +32,7 @@ export function About() {
           <div className="row"><span className="k">focus</span><span className="v">devex · agentic ai</span></div>
           <div className="row"><span className="k">writes</span><span className="v">jordi rants</span></div>
           <div className="row"><span className="k">ships</span><span className="v">side projects, weekly-ish</span></div>
-          <div className="row"><span className="k">team</span><span className="v">warriors · til the end</span></div>
+          <div className="row"><span className="k">team</span><span className="v">lakers · til the end</span></div>
         </div>
       </div>
     </section>

@@ -14,7 +14,7 @@ export const PROJECTS: Project[] = [
     title: 'oh-my-posh · nba integration',
     desc: 'live nba scores in your terminal prompt. a small custom segment for the oh-my-posh prompt engine that pulls the current/most recent game for your team and renders it inline.',
     tags: ['go', 'oss', 'cli'],
-    href: 'https://github.com/joadoumie',
+    href: 'https://ohmyposh.dev/docs/segments/web/nba',
   },
   {
     glyph: '●',
