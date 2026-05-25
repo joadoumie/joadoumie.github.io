@@ -6,9 +6,9 @@ export function Work() {
   const ref = useRef<HTMLDivElement>(null);
   useReveal(ref);
   return (
-    <section id="work" className="shell">
+    <section id="projects" className="shell">
       <div className="section-label">
-        <span className="num">03</span><span>/ work</span><span className="dash"></span>
+        <span className="num">03</span><span>/ projects</span><span className="dash"></span>
         <span style={{ color: 'var(--fg-mute)' }}>git log --oneline --no-merges</span>
       </div>
       <div className="gitlog fade-in" ref={ref}>

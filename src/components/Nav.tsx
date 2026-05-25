@@ -19,7 +19,7 @@ export function Nav() {
         <div className="nav-links">
           <a href="#about"><span className="num">01</span>about</a>
           <a href="#type"><span className="num">02</span>type</a>
-          <a href="#work"><span className="num">03</span>work</a>
+          <a href="#projects"><span className="num">03</span>projects</a>
           <a href="#contact"><span className="num">04</span>contact</a>
         </div>
       </div>
