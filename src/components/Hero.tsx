@@ -64,7 +64,7 @@ export function Hero() {
       i++;
       setBioTyped(HERO_BIO.slice(0, i));
       if (i < HERO_BIO.length) {
-        nextTimer = window.setTimeout(tick, 38 + Math.random() * 30);
+        nextTimer = window.setTimeout(tick, 78 + Math.random() * 30);
       } else {
         setBioDone(true);
       }
