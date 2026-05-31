@@ -133,8 +133,13 @@ section {
 
 /* HERO */
 .hero {
-  min-height: 100vh;
+  /* Size to content plus a buffer instead of filling the viewport. On tall
+     desktop screens, min-height:100vh + center alignment left the centered
+     content floating far above the bottom-pinned .scroll-hint. padding-bottom
+     reserves room for the absolutely-positioned scroll hint so it sits just
+     below the content at a consistent distance, whatever the screen height. */
   padding-top: 90px;
+  padding-bottom: 64px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -149,6 +154,7 @@ section {
 }
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero { padding-bottom: 60px; }
 }
 
 .hero-eyebrow {
@@ -413,11 +419,12 @@ section {
 @media (hover: none) and (pointer: coarse) {
   .court-caption-mouse { display: none; }
   .court-caption-touch { display: inline; }
+  .court-caption { margin-bottom: 12px; }
 }
 
 .scroll-hint {
   position: absolute;
-  bottom: 28px; left: 50%;
+  bottom: 16px; left: 50%;
   transform: translateX(-50%);
   font-size: 10px;
   color: var(--fg-mute);
