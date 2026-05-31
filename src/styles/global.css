@@ -149,6 +149,7 @@ section {
 }
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero { padding-bottom: 72px; }
 }
 
 .hero-eyebrow {
@@ -413,6 +414,7 @@ section {
 @media (hover: none) and (pointer: coarse) {
   .court-caption-mouse { display: none; }
   .court-caption-touch { display: inline; }
+  .court-caption { margin-bottom: 12px; }
 }
 
 .scroll-hint {
