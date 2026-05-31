@@ -157,7 +157,7 @@ export function AsciiCourt() {
 
       if (s.mode === 'dribble') {
         s.x += (s.targetX - s.x) * 0.12;
-        s.bouncePhase += 0.18;
+        s.bouncePhase += 0.065;
         const bounceHeight = 2.4;
         const bounce = Math.abs(Math.sin(s.bouncePhase)) * bounceHeight;
         s.y = FLOOR_ROW - 1 - bounce;
