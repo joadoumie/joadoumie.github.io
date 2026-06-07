@@ -10,6 +10,14 @@ export type Project = {
 export const PROJECTS: Project[] = [
   {
     glyph: '●',
+    hash: 'f3a9b2e',
+    title: 'econ honors thesis · uc berkeley',
+    desc: 'does the nba labor market efficiently price player talent? applied the efficient market hypothesis to nba contracts, testing whether salary reflects on-court value. undergraduate honors thesis in economics.',
+    tags: ['research', 'econ', 'berkeley'],
+    href: 'https://escholarship.org/search?q=Adoumie+NBA',
+  },
+  {
+    glyph: '●',
     hash: 'a4f1c20',
     title: 'oh-my-posh · nba integration',
     desc: 'live nba scores in your terminal prompt. a small custom segment for the oh-my-posh prompt engine that pulls the current/most recent game for your team and renders it inline.',
