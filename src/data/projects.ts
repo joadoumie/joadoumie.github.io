@@ -11,9 +11,9 @@ export const PROJECTS: Project[] = [
   {
     glyph: '●',
     hash: 'f3a9b2e',
-    title: 'econ honors thesis · uc berkeley',
-    desc: 'does the nba labor market efficiently price player talent? applied the efficient market hypothesis to nba contracts, testing whether salary reflects on-court value. undergraduate honors thesis in economics.',
-    tags: ['research', 'econ', 'berkeley'],
+    title: 'violations of neoclassical theory · nba labor market',
+    desc: 'finds that nba player performance is a poor predictor of salary — a violation of rational agent assumptions in neoclassical economics. discusses why compensation diverges from on-court value and what that signals for other labor markets. undergraduate honors thesis at uc berkeley.',
+    tags: ['research', 'econ', 'nba', 'berkeley'],
     href: 'https://econ.berkeley.edu/sites/default/files/Adoumie_Jordi_Economics%20Honors%20Thesis%20-%20Final.pdf',
   },
   {
