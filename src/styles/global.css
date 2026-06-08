@@ -642,6 +642,7 @@ section {
 
 /* ===== Terminal takeover (post-session) — matrix-green shell ===== */
 .term-takeover {
+  margin-top: 28px;
   --term-green: #00ff7f;
   --term-green-bright: #6dffa3;
   --term-green-dim: #2ea862;
