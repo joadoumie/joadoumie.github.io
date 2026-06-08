@@ -10,6 +10,14 @@ export type Project = {
 export const PROJECTS: Project[] = [
   {
     glyph: '●',
+    hash: 'f3a9b2e',
+    title: 'violations of neoclassical theory · nba labor market',
+    desc: 'finds that nba player performance is a poor predictor of salary — a violation of rational agent assumptions in neoclassical economics. discusses why compensation diverges from on-court value and what that signals for other labor markets. undergraduate honors thesis at uc berkeley.',
+    tags: ['research', 'econ', 'nba', 'berkeley'],
+    href: 'https://econ.berkeley.edu/sites/default/files/Adoumie_Jordi_Economics%20Honors%20Thesis%20-%20Final.pdf',
+  },
+  {
+    glyph: '●',
     hash: 'a4f1c20',
     title: 'oh-my-posh · nba integration',
     desc: 'live nba scores in your terminal prompt. a small custom segment for the oh-my-posh prompt engine that pulls the current/most recent game for your team and renders it inline.',
