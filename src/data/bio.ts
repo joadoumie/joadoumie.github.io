@@ -1,6 +1,6 @@
 export const HERO_BIO =
-  'i build software, ship side projects, and write about ' +
-  'both. currently a pm at bloomberg working on bquant — coding agents, ' +
+  'i am a technologist who likes to build cool things. occasionally i write about it. ' +
+  'currently a pm at bloomberg working on bquant — coding agents, ' +
   'devex, and the messy seam between humans and llms. previously @microsoft.';
 
 export const HERO_META_LINES: Array<{ k: string; v: string }> = [
