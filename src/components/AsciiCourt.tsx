@@ -76,6 +76,7 @@ export function AsciiCourt() {
     };
 
     const onMove = (e: PointerEvent) => {
+      if (stateRef.current.mode !== 'dribble') return;
       const { charW } = colsToPx();
       const r = stage.getBoundingClientRect();
       const xChar = (e.clientX - r.left) / charW;
@@ -374,7 +375,7 @@ function buildGrid(s: CourtState): string {
   }
   playerCol = Math.max(2, Math.min(RIM_COL - 6, playerCol));
 
-  if (s.mode !== 'shooting' || s.shotT < 8) {
+  {
     const px = playerCol;
     const headRow = FLOOR_ROW - 4;
     const bob = s.mode === 'dribble' ? Math.round(Math.abs(Math.sin(s.bouncePhase)) * 0.4) : 0;
