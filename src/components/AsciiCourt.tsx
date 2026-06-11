@@ -75,7 +75,16 @@ export function AsciiCourt() {
       return { w: r.width, h: r.height, charW: r.width / COLS, charH: r.height / ROWS };
     };
 
+    // On touch: delay charging so a drag cancels it before it starts.
+    let touchHoldTimer: ReturnType<typeof setTimeout> | null = null;
+    const HOLD_DELAY_MS = 180;
+
     const onMove = (e: PointerEvent) => {
+      // If the finger moved before the hold timer fired, this is a drag — cancel charging.
+      if ((e.pointerType === 'touch' || e.pointerType === 'pen') && touchHoldTimer !== null) {
+        clearTimeout(touchHoldTimer);
+        touchHoldTimer = null;
+      }
       if (stateRef.current.mode !== 'dribble') return;
       const { charW } = colsToPx();
       const r = stage.getBoundingClientRect();
@@ -93,18 +102,37 @@ export function AsciiCourt() {
       const r = stage.getBoundingClientRect();
       const xChar = (e.clientX - r.left) / charW;
       s.targetX = Math.max(3, Math.min(RIM_COL - 8, xChar));
-      // Skip the easing for touch so the player jumps directly to the finger
-      // instead of crawling toward it while the charge already builds.
+
       if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+        // Capture pointer so drag events fire even when finger leaves the element.
+        try { stage.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+        // Skip the easing for touch so the player jumps directly to the finger
+        // instead of crawling toward it while the charge already builds.
         s.x = s.targetX;
+        if (s.mode !== 'dribble') return;
+        // Don't charge immediately — wait to see if this is a drag or a hold.
+        touchHoldTimer = setTimeout(() => {
+          touchHoldTimer = null;
+          if (s.mode === 'dribble') {
+            s.mode = 'charging';
+            s.chargeStart = performance.now();
+            s.chargePower = 0;
+          }
+        }, HOLD_DELAY_MS);
+      } else {
+        if (s.mode !== 'dribble') return;
+        s.mode = 'charging';
+        s.chargeStart = performance.now();
+        s.chargePower = 0;
       }
-      if (s.mode !== 'dribble') return;
-      s.mode = 'charging';
-      s.chargeStart = performance.now();
-      s.chargePower = 0;
     };
 
     const releaseShot = () => {
+      // Cancel any pending hold timer (quick tap that didn't trigger charging).
+      if (touchHoldTimer !== null) {
+        clearTimeout(touchHoldTimer);
+        touchHoldTimer = null;
+      }
       const s = stateRef.current;
       if (s.mode !== 'charging') return;
       const held = performance.now() - s.chargeStart;
@@ -230,6 +258,7 @@ export function AsciiCourt() {
 
     return () => {
       cancelAnimationFrame(raf);
+      if (touchHoldTimer !== null) clearTimeout(touchHoldTimer);
       stage.removeEventListener('pointermove', onMove);
       stage.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointerup', releaseShot);
@@ -289,7 +318,7 @@ export function AsciiCourt() {
           <span className="kbd">move</span> to dribble · <span className="kbd">hold + release</span> to shoot
         </span>
         <span className="court-caption-touch">
-          <span className="kbd">tap + hold</span> to aim & charge · <span className="kbd">release</span> to shoot
+          <span className="kbd">drag</span> to move · <span className="kbd">hold + release</span> to shoot
         </span>
       </div>
     </div>
