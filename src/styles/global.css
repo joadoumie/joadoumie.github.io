@@ -585,6 +585,26 @@ section {
 .mt-prompt .ch.cur {
   background: linear-gradient(to top, var(--accent) 2px, transparent 2px);
 }
+/* Visually hidden input that receives keyboard focus — works on mobile virtual keyboards */
+.mt-hidden-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font-size: 16px; /* prevents iOS Safari auto-zoom on focus */
+  padding: 0;
+  margin: 0;
+  resize: none;
+}
+
 .mt-prompt-hint {
   position: absolute;
   inset: 0;
@@ -606,6 +626,12 @@ section {
   margin: 0 4px;
   color: var(--accent);
   background: var(--bg-2);
+}
+/* show mouse hint by default; swap to touch hint on touch-primary devices */
+.mt-prompt-hint-touch { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .mt-prompt-hint-mouse { display: none; }
+  .mt-prompt-hint-touch { display: inline; }
 }
 .mt-controls {
   margin-top: 18px;

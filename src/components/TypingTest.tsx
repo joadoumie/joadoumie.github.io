@@ -20,6 +20,7 @@ export function TypingTest({ duration = 15 }: Props) {
   const [showBoard, setShowBoard] = useState(false);
   const [board, setBoard] = useState<Score[]>(() => loadBoard());
   const promptRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const startedAt = useRef(0);
 
   // timer
@@ -53,21 +54,20 @@ export function TypingTest({ duration = 15 }: Props) {
     return () => window.clearInterval(id);
   }, [active, typed, text]);
 
-  const onKey: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
+  const onInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     if (done) return;
-    if (e.key.length === 1 || e.key === 'Backspace' || e.key === ' ') {
-      e.preventDefault();
-    }
-    if (!started && e.key.length === 1) {
+    const newVal = e.target.value.slice(0, text.length);
+    if (!started && newVal.length > 0) {
       setStarted(true);
       setActive(true);
       startedAt.current = performance.now();
     }
-    if (e.key === 'Backspace') {
-      setTyped((t) => t.slice(0, -1));
-    } else if (e.key.length === 1) {
-      setTyped((t) => (t.length < text.length ? t + e.key : t));
-    }
+    setTyped(newVal);
+  };
+
+  const onInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    // Prevent Tab from moving focus away during a test
+    if (e.key === 'Tab') e.preventDefault();
   };
 
   // live stats
@@ -120,7 +120,7 @@ export function TypingTest({ duration = 15 }: Props) {
     setSubmitted(false);
     setSubmitName('');
     startedAt.current = 0;
-    window.setTimeout(() => promptRef.current?.focus(), 0);
+    window.setTimeout(() => inputRef.current?.focus(), 0);
   }, [duration]);
 
   if (done) {
@@ -155,16 +155,30 @@ export function TypingTest({ duration = 15 }: Props) {
       <div className="mt-stage">
         <div
           className="mt-prompt"
-          tabIndex={0}
           ref={promptRef}
-          onKeyDown={onKey}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onClick={() => inputRef.current?.focus()}
         >
+          <input
+            ref={inputRef}
+            type="text"
+            className="mt-hidden-input"
+            value={typed}
+            onChange={onInputChange}
+            onKeyDown={onInputKeyDown}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            onPaste={(e) => e.preventDefault()}
+            aria-label="typing input"
+          />
           {renderPrompt(text, typed, !done && focused)}
           {!focused && (
             <div className="mt-prompt-hint">
-              click or press <span className="key">Tab</span> to type
+              <span className="mt-prompt-hint-mouse">click or press <span className="key">Tab</span> to type</span>
+              <span className="mt-prompt-hint-touch">tap to type</span>
             </div>
           )}
         </div>
