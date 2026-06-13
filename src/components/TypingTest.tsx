@@ -120,8 +120,37 @@ export function TypingTest({ duration = 15 }: Props) {
     setSubmitted(false);
     setSubmitName('');
     startedAt.current = 0;
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    window.setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 0);
   }, [duration]);
+
+  // Prevent the mobile virtual keyboard from auto-scrolling the word prompt out
+  // of view. When the keyboard opens, iOS shrinks the visual viewport and scrolls
+  // the focused element (the full-height hidden input) into view — pushing the
+  // visible words upward. We suppress the browser's auto-scroll with
+  // `preventScroll: true` on focus() and then manually re-anchor the prompt when
+  // the viewport resizes (i.e. keyboard opens/closes).
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    let rafId: number;
+    const handleResize = () => {
+      if (document.activeElement !== inputRef.current || !promptRef.current) return;
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        if (!promptRef.current) return;
+        const rect = promptRef.current.getBoundingClientRect();
+        // Scroll the page so the prompt top sits ~20 px below the viewport top.
+        window.scrollBy({ top: rect.top - 20, behavior: 'smooth' });
+      });
+    };
+
+    viewport.addEventListener('resize', handleResize);
+    return () => {
+      viewport.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   if (done) {
     return (
@@ -156,7 +185,7 @@ export function TypingTest({ duration = 15 }: Props) {
         <div
           className="mt-prompt"
           ref={promptRef}
-          onClick={() => inputRef.current?.focus()}
+          onClick={() => inputRef.current?.focus({ preventScroll: true })}
         >
           <input
             ref={inputRef}
