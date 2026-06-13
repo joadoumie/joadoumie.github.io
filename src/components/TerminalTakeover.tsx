@@ -90,6 +90,7 @@ export function TerminalTakeover({
   const [cmdBuf, setCmdBuf] = useState('');
   const [shellActive, setShellActive] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const shellInputRef = useRef<HTMLInputElement>(null);
 
   // play through scripted intro
   useEffect(() => {
@@ -214,7 +215,7 @@ export function TerminalTakeover({
   const showingTypingCmd = current && current.kind === 'cmd';
 
   return (
-    <div className="term-takeover" onClick={() => wrapRef.current?.focus?.()}>
+    <div className="term-takeover" onClick={() => { wrapRef.current?.focus?.(); shellInputRef.current?.focus(); }}>
       <div className="term-bar">
         <div className="term-dots">
           <span className="td td-r"></span>
@@ -260,6 +261,29 @@ export function TerminalTakeover({
           </div>
         )}
       </div>
+      {shellActive && (
+        <input
+          ref={shellInputRef}
+          type="text"
+          className="mt-hidden-input"
+          value={cmdBuf}
+          onChange={(e) => setCmdBuf(e.target.value.slice(0, 60))}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              runCommand(cmdBuf.trim());
+              setCmdBuf('');
+            } else if (e.key === 'Tab') {
+              e.preventDefault();
+            }
+          }}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="none"
+          spellCheck={false}
+          aria-label="terminal input"
+        />
+      )}
     </div>
   );
 }
